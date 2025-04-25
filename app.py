@@ -9,20 +9,42 @@ from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 
+class Course:    
+    def __init__(self, code:str):
+        self.code = code
+
+    def set_easy(self, easy_ranking):
+        self.easy = easy_ranking
+    
+    def set_liked(self, liked_ranking):
+        self.liked = liked_ranking
+    def set_useful(self, useful_ranking):
+        self.useful = useful_ranking
+
+
+course_list = [Course("psych101"), Course("cs137"), Course("math135"), Course("cs138"), Course("ece105")]
+
 options = Options()
 options.add_argument("--headless")  # Run browser in headless mode
 options.add_argument("--disable-gpu")
 options.add_argument("--no-sandbox")
 
-
-url = "https://uwflow.com/course/psych101"
+url = f"https://uwflow.com/course/{course_list[3].code}"
 
 driver = webdriver.Chrome(options=options)
-driver.get(url)
 
-element = WebDriverWait(driver, 10).until(EC.visibility_of_all_elements_located((By.CSS_SELECTOR, "div.sc-qXRQq.jtOWzV")))
+for course in course_list:
+    url = f"https://uwflow.com/course/{course.code}"
 
-for e in element:
-    print(e.text)
+    driver.get(url)
 
+    element = WebDriverWait(driver, 10).until(EC.visibility_of_all_elements_located((By.CSS_SELECTOR, "div.sc-qXRQq.jtOWzV")))
+
+    course.set_easy(element[0].text)
+    course.set_useful(element[1].text)
+
+for c in course_list:
+    print(f"code: {c.code} || easy: {c.easy} || usefullness: {c.useful}")
 driver.quit()
+
+
