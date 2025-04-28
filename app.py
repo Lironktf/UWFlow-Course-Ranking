@@ -40,7 +40,8 @@ class ImageParse:
                               files={self.file: f},
                               data=payload
                               )
-            return r.content.decode()
+            data = r.json()
+            return data['ParsedResults'][0]['ParsedText']
 
 
         # myfiles = {'file': open(self.file, 'rb')}
@@ -48,8 +49,13 @@ class ImageParse:
         # print(r.text)
         
 
-imageread = ImageParse('./sc.png')
-test = imageread.api_call()
+imageread = ImageParse('./testImg2.png')
+test:str = imageread.api_call()
+# test.replace("$", '8')
+test = test.replace("Q", '0')
+test = test.replace("ß", '6')
+test = test.replace("Å", '8')
+test = test.replace("å", '6')
 print(test)
 
 course_list = [Course("psych101"), Course("cs137"), Course("math135"), Course("cs138"), Course("ece105")]
