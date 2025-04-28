@@ -9,6 +9,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 
+key = "K83572243488957"
+
 class Course:    
     def __init__(self, code:str):
         self.code = code
@@ -21,6 +23,34 @@ class Course:
     def set_useful(self, useful_ranking):
         self.useful = useful_ranking
 
+class ImageParse:
+    def __init__(self, file):
+        self.file = file
+
+    def api_call(self):
+        
+        payload = {
+            'apikey': 'K83572243488957',
+            'isOverlayRequired': False,
+            'language': 'eng'
+        }
+
+        with open(self.file,'rb') as f:
+            r = requests.post('https://api.ocr.space/parse/image',
+                              files={self.file: f},
+                              data=payload
+                              )
+            return r.content.decode()
+
+
+        # myfiles = {'file': open(self.file, 'rb')}
+        # r = requests.post('https://api.ocr.space/parse/image', files=myfiles)
+        # print(r.text)
+        
+
+imageread = ImageParse('./sc.png')
+test = imageread.api_call()
+print(test)
 
 course_list = [Course("psych101"), Course("cs137"), Course("math135"), Course("cs138"), Course("ece105")]
 
@@ -43,8 +73,14 @@ for course in course_list:
     course.set_easy(element[0].text)
     course.set_useful(element[1].text)
 
+
+
+
+course_list.sort(key=lambda x: x.easy, reverse=True)
+
 for c in course_list:
     print(f"code: {c.code} || easy: {c.easy} || usefullness: {c.useful}")
+
 driver.quit()
 
 
